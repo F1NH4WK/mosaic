@@ -17,10 +17,9 @@ func WriteToDisk(inChan <-chan string, filename string, verbose bool) error {
 	defer writer.Flush()
 
 	for password := range inChan {
-		// Write in file's buffer
 		writer.WriteString(password + "\n")
 		
-		// Verbose flag (lowest speed)
+
 		if verbose {
 			fmt.Println(password)
 		}

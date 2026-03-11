@@ -4,8 +4,9 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
+
+	"github.com/F1NH4WK/mosaic/internal/models"
 )
 
 func readLine(reader *bufio.Reader, prompt string) string {
@@ -14,53 +15,52 @@ func readLine(reader *bufio.Reader, prompt string) string {
 	return strings.TrimSpace(text)
 }
 
-func StartInteractiveMode() ([]string, int, bool) {
+func StartInteractiveMode() (models.Profile, bool) {
 	reader := bufio.NewReader(os.Stdin)
-	var words []string
-	var year int
+	var profile models.Profile
 
-	fmt.Println("\n[+] Insira as informações sobre o alvo para gerar o dicionário.")
-	fmt.Println("[+] Se não souber alguma informação, basta apertar ENTER! ;)")
+	fmt.Println("\n[+] Bem-vindo ao Mosaic (Modo Interativo).")
+	fmt.Println("[+] Insira as informações sobre o alvo para gerar o dicionário.")
+	fmt.Println("[+] Se não souber alguma informação, basta premir ENTER! ;)")
 
 	if val := readLine(reader, "> Primeiro Nome: "); val != "" {
-		words = append(words, val)
+		profile.Names = append(profile.Names, val)
 	}
 	if val := readLine(reader, "> Sobrenome: "); val != "" {
-		words = append(words, val)
+		profile.Names = append(profile.Names, val)
 	}
 	if val := readLine(reader, "> Apelido (Nickname): "); val != "" {
-		words = append(words, val)
+		profile.Names = append(profile.Names, val)
 	}
 
-	birthdate := readLine(reader, "> Data de nascimento (DDMMAAAA): ")
-	if len(birthdate) == 8 {
-		if y, err := strconv.Atoi(birthdate[4:]); err == nil {
-			year = y
-		}
-		words = append(words, birthdate[:2], birthdate[2:4], birthdate[4:])
+	dob := readLine(reader, "> Data de nascimento (DDMMAAAA): ")
+	if dob != "" {
+		cleanDOB := strings.ReplaceAll(dob, "-", "")
+		cleanDOB = strings.ReplaceAll(cleanDOB, "/", "")
+		profile.DOB = cleanDOB
 	}
 
 	fmt.Println()
 	if val := readLine(reader, "> Nome do parceiro(a): "); val != "" {
-		words = append(words, val)
+		profile.Names = append(profile.Names, val)
 	}
 	if val := readLine(reader, "> Nome do filho(a): "); val != "" {
-		words = append(words, val)
+		profile.Names = append(profile.Names, val)
 	}
 
 	fmt.Println()
 	if val := readLine(reader, "> Nome do Pet: "); val != "" {
-		words = append(words, val)
+		profile.Names = append(profile.Names, val)
 	}
 	if val := readLine(reader, "> Nome da Empresa: "); val != "" {
-		words = append(words, val)
+		profile.Names = append(profile.Names, val)
 	}
 
 	fmt.Println()
 	if val := readLine(reader, "> Deseja adicionar palavras-chave extras? (separadas por vírgula): "); val != "" {
 		extras := strings.Split(val, ",")
 		for _, ex := range extras {
-			words = append(words, strings.TrimSpace(ex))
+			profile.Keywords = append(profile.Keywords, strings.TrimSpace(ex))
 		}
 	}
 
@@ -70,6 +70,6 @@ func StartInteractiveMode() ([]string, int, bool) {
 		useLeetspeak = true
 	}
 
-	fmt.Println("\n[*] Informações coletadas com sucesso!")
-	return words, year, useLeetspeak
+	fmt.Println("\n[*] Inteligência recolhida com sucesso! A iniciar o gerador...")
+	return profile, useLeetspeak
 }
