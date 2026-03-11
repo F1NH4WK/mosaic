@@ -8,6 +8,7 @@ type Rules struct {
 	RequireLower bool
 	RequireNum   bool
 	RequireSpec  bool
+	UseLeetspeak bool
 }
 
 
@@ -15,6 +16,13 @@ func GeneratePasswords(baseWord string, outChan chan<- string, rules Rules) {
 	buffer := []byte(baseWord)
 	
 	if len(buffer) < rules.MinLength {
+		return
+	}
+
+	if !rules.UseLeetspeak {
+		if isValid(buffer, rules) {
+			outChan <- string(buffer)
+		}
 		return
 	}
 	

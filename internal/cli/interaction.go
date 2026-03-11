@@ -14,7 +14,7 @@ func readLine(reader *bufio.Reader, prompt string) string {
 	return strings.TrimSpace(text)
 }
 
-func StartInteractiveMode() ([]string, int) {
+func StartInteractiveMode() ([]string, int, bool) {
 	reader := bufio.NewReader(os.Stdin)
 	var words []string
 	var year int
@@ -64,6 +64,12 @@ func StartInteractiveMode() ([]string, int) {
 		}
 	}
 
+	fmt.Println()
+	useLeetspeak := false
+	if val := readLine(reader, "> Deseja aplicar mutações Leetspeak pesadas? (s/N): "); strings.ToLower(val) == "s" {
+		useLeetspeak = true
+	}
+
 	fmt.Println("\n[*] Informações coletadas com sucesso!")
-	return words, year
+	return words, year, useLeetspeak
 }
