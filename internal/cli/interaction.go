@@ -19,21 +19,21 @@ func StartInteractiveMode() (models.Profile, bool) {
 	reader := bufio.NewReader(os.Stdin)
 	var profile models.Profile
 
-	fmt.Println("\n[+] Bem-vindo ao Mosaic (Modo Interativo).")
-	fmt.Println("[+] Insira as informações sobre o alvo para gerar o dicionário.")
-	fmt.Println("[+] Se não souber alguma informação, basta premir ENTER! ;)")
+	fmt.Println("\n[+] Welcome to Mosaic (Interactive Mode).")
+	fmt.Println("[+] Insert the target's information to generate the wordlist.")
+	fmt.Println("[+] If you don't know some info, just press ENTER! ;)")
 
-	if val := readLine(reader, "> Primeiro Nome: "); val != "" {
+	if val := readLine(reader, "> First Name: "); val != "" {
 		profile.Names = append(profile.Names, val)
 	}
-	if val := readLine(reader, "> Sobrenome: "); val != "" {
+	if val := readLine(reader, "> Surname: "); val != "" {
 		profile.Names = append(profile.Names, val)
 	}
-	if val := readLine(reader, "> Apelido (Nickname): "); val != "" {
+	if val := readLine(reader, "> Nickname: "); val != "" {
 		profile.Names = append(profile.Names, val)
 	}
 
-	dob := readLine(reader, "> Data de nascimento (DDMMAAAA): ")
+	dob := readLine(reader, "> Date of birth (DDMMYYYY): ")
 	if dob != "" {
 		cleanDOB := strings.ReplaceAll(dob, "-", "")
 		cleanDOB = strings.ReplaceAll(cleanDOB, "/", "")
@@ -41,23 +41,23 @@ func StartInteractiveMode() (models.Profile, bool) {
 	}
 
 	fmt.Println()
-	if val := readLine(reader, "> Nome do parceiro(a): "); val != "" {
+	if val := readLine(reader, "> Partner's name: "); val != "" {
 		profile.Names = append(profile.Names, val)
 	}
-	if val := readLine(reader, "> Nome do filho(a): "); val != "" {
-		profile.Names = append(profile.Names, val)
-	}
-
-	fmt.Println()
-	if val := readLine(reader, "> Nome do Pet: "); val != "" {
-		profile.Names = append(profile.Names, val)
-	}
-	if val := readLine(reader, "> Nome da Empresa: "); val != "" {
+	if val := readLine(reader, "> Child's name: "); val != "" {
 		profile.Names = append(profile.Names, val)
 	}
 
 	fmt.Println()
-	if val := readLine(reader, "> Deseja adicionar palavras-chave extras? (separadas por vírgula): "); val != "" {
+	if val := readLine(reader, "> Pet's name: "); val != "" {
+		profile.Names = append(profile.Names, val)
+	}
+	if val := readLine(reader, "> Company name: "); val != "" {
+		profile.Names = append(profile.Names, val)
+	}
+
+	fmt.Println()
+	if val := readLine(reader, "> Do you want to add extra keywords? (comma-separated): "); val != "" {
 		extras := strings.Split(val, ",")
 		for _, ex := range extras {
 			profile.Keywords = append(profile.Keywords, strings.TrimSpace(ex))
@@ -66,10 +66,10 @@ func StartInteractiveMode() (models.Profile, bool) {
 
 	fmt.Println()
 	useLeetspeak := false
-	if val := readLine(reader, "> Deseja aplicar mutações Leetspeak pesadas? (s/N): "); strings.ToLower(val) == "s" {
+	if val := readLine(reader, "> Do you want to apply heavy Leetspeak mutations? (y/N): "); strings.ToLower(val) == "y" {
 		useLeetspeak = true
 	}
 
-	fmt.Println("\n[*] Inteligência recolhida com sucesso! A iniciar o gerador...")
+	fmt.Println("\n[*] Intelligence gathered successfully! Starting the generator...")
 	return profile, useLeetspeak
 }
