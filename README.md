@@ -2,8 +2,6 @@
 
 ![Go Version](https://img.shields.io/badge/Go-1.20+-00ADD8?style=for-the-badge&logo=go)
 ![GitHub License](https://img.shields.io/github/license/f1nh4wk/mosaic)
-![Zero Dependencies](https://img.shields.io/badge/Dependencies-0-brightgreen.style=for-the-badge)
-![Concurrency](https://img.shields.io/badge/Concurrency-MPSC_Channels-orange.style=for-the-badge)
 
 **Mosaic** is a high-performance wordlist generator focused on OSINT and human profiling, heavily inspired by the legendary **![CUPP](https://github.com/Mebus/cupp)** tool. Developed in **Go**, it replaces blind brute-force generation with behavioral heuristics, processed through a highly concurrent architecture (![Goroutines](https://go.dev/tour/concurrency/1) and MPSC Channels).
 
