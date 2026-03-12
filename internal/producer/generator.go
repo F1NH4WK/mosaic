@@ -38,10 +38,6 @@ func GenerateCombinations(profile models.Profile) []string {
 		bases = append(bases, strings.ToUpper(w))
 	}
 
-	for _, w := range bases {
-		add(w)
-	}
-
 	var years, months, days []string
 	if len(profile.DOB) == 8 {
 		d := profile.DOB[0:2]
@@ -53,32 +49,57 @@ func GenerateCombinations(profile models.Profile) []string {
 		months = []string{m}
 		years = []string{y, shortY}
 
-		add(d + m + y)      // 15071990
-		add(m + d + y)      // 07151990
-		add(d + m + shortY) // 150790
-		add(m + d + shortY) // 071590
-		add(y + m + d)      // 19900715
+	
+		bds := []string{
+			d + m + y,      
+			m + d + y,      
+			d + m + shortY, 
+			m + d + shortY, 
+			d + m,          
+			m + d,          
+			d + y,          
+			d + shortY,     
+			m + y,          
+			m + shortY,     
+			y + m + d,      
+		}
+		bases = append(bases, bds...) 
 	}
+
+
+	for _, w := range bases {
+		add(w)
+	}
+
 
 	commonSuffixes := []string{"123", "1234", "12345", "123456", "1", "12", "!", "@", "!!", "123!", "2023", "2024"}
 	commonSuffixes = append(commonSuffixes, years...)
 	commonSuffixes = append(commonSuffixes, months...)
 	commonSuffixes = append(commonSuffixes, days...)
 
-	for _, w := range bases {
+	for _, w1 := range bases {
+		
+	
 		for _, suf := range commonSuffixes {
-			add(w + suf)
-			add(w + "_" + suf)
-			add(w + "." + suf)
+			add(w1 + suf)
+			add(w1 + "_" + suf)
 		}
 
 		for _, w2 := range bases {
-			if strings.EqualFold(w, w2) {
-				continue
+			if strings.EqualFold(w1, w2) {
+				continue 
 			}
-			add(w + w2)
-			add(w + "_" + w2)
-			add(w + "." + w2)
+			
+		
+			combos := []string{w1 + w2, w1 + "_" + w2, w1 + "." + w2}
+			for _, c := range combos {
+				add(c)
+				
+			
+				for _, suf := range commonSuffixes {
+					add(c + suf)
+				}
+			}
 		}
 	}
 
