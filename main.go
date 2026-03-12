@@ -1,4 +1,3 @@
-// main.go
 package main
 
 import (
@@ -18,25 +17,25 @@ import (
 )
 
 func main() {
-	interactivePtr := flag.Bool("i", false, "Modo interativo (Perguntas passo a passo)")
+	interactivePtr := flag.Bool("i", false, "Interactive mode (Step-by-step prompts)")
 
-	namePtr := flag.String("n", "", "Primeiro nome do alvo")
-	surnamePtr := flag.String("s", "", "Sobrenome do alvo")
-	nickPtr := flag.String("nick", "", "Apelido (Nickname)")
-	dobPtr := flag.String("dob", "", "Data de nascimento (DDMMAAAA)")
-	partnerPtr := flag.String("p", "", "Nome do parceiro(a)")
-	childPtr := flag.String("c", "", "Nome do filho(a)")
-	keywordsPtr := flag.String("k", "", "Palavras-chave extras separadas por vírgula")
+	namePtr := flag.String("n", "", "Target's first name")
+	surnamePtr := flag.String("s", "", "Target's surname")
+	nickPtr := flag.String("nick", "", "Target's nickname")
+	dobPtr := flag.String("dob", "", "Date of birth (DDMMYYYY)")
+	partnerPtr := flag.String("p", "", "Partner's name")
+	childPtr := flag.String("c", "", "Child's name")
+	keywordsPtr := flag.String("k", "", "Extra keywords separated by comma")
 	
-	outputPtr := flag.String("o", "wordlist.txt", "Ficheiro de saída")
-	leetPtr := flag.Bool("leet", false, "Ativar mutações de Leetspeak (Gera listas massivas)")
-	verbosePtr := flag.Bool("v", false, "Modo verboso: Imprime as senhas na tela (Aviso: Reduz a velocidade)")
+	outputPtr := flag.String("o", "wordlist.txt", "Output file")
+	leetPtr := flag.Bool("leet", false, "Enable Leetspeak mutations (Warning: Generates massive lists)")
+	verbosePtr := flag.Bool("v", false, "Verbose mode: Print passwords to screen (Warning: Reduces I/O speed)")
 
-	minLen := flag.Int("min", 6, "Tamanho mínimo da palavra-passe")
-	reqUpper := flag.Bool("upper", false, "Exigir pelo menos 1 letra maiúscula")
-	reqLower := flag.Bool("lower", false, "Exigir pelo menos 1 letra minúscula")
-	reqNum := flag.Bool("num", false, "Exigir pelo menos 1 número")
-	reqSpec := flag.Bool("spec", false, "Exigir pelo menos 1 caractere especial")
+	minLen := flag.Int("min", 6, "Minimum password length")
+	reqUpper := flag.Bool("upper", false, "Require at least 1 uppercase letter")
+	reqLower := flag.Bool("lower", false, "Require at least 1 lowercase letter")
+	reqNum := flag.Bool("num", false, "Require at least 1 number")
+	reqSpec := flag.Bool("spec", false, "Require at least 1 special character")
 
 	flag.Parse()
 
@@ -46,14 +45,14 @@ func main() {
 	if *interactivePtr {
 		profile, leet := cli.StartInteractiveMode()
 		if len(profile.Names) == 0 && len(profile.Keywords) == 0 {
-			fmt.Println("[-] Nenhuma informação fornecida. A abortar.")
+			fmt.Println("[-] No information provided. Aborting.")
 			os.Exit(1)
 		}
 		targetProfile = profile
 		applyLeetspeak = leet
 	} else {
 		if *namePtr == "" {
-			fmt.Println("Erro: O primeiro nome do alvo (-n) é obrigatório fora do modo interativo (-i).")
+			fmt.Println("Error: Target's first name (-n) is required outside interactive mode (-i).")
 			os.Exit(1)
 		}
 
@@ -92,11 +91,11 @@ func main() {
 	}
 
 	start := time.Now()
-	fmt.Println("[*] A iniciar o Mosaic - Gerador e Perfilador Tático...")
-	fmt.Println("[*] A analisar perfil e a extrair heurísticas base...")
+	fmt.Println("[*] Starting Mosaic - Tactical Profiler & Generator...")
+	fmt.Println("[*] Analyzing profile and extracting base heuristics...")
 
 	combinedBaseWords := producer.GenerateCombinations(targetProfile)
-	fmt.Printf("[*] Foram geradas %d permutações base precisas.\n", len(combinedBaseWords))
+	fmt.Printf("[*] Generated %d precise base permutations.\n", len(combinedBaseWords))
 
 	passChan := make(chan string, 150000)
 	var wg sync.WaitGroup
@@ -104,7 +103,7 @@ func main() {
 	doneChan := make(chan bool)
 	go func() {
 		if err := consumer.WriteToDisk(passChan, *outputPtr, *verbosePtr); err != nil {
-			log.Fatalf("Erro ao escrever no disco: %v", err)
+			log.Fatalf("Error writing to disk: %v", err)
 		}
 		doneChan <- true
 	}()
@@ -117,12 +116,12 @@ func main() {
 
 	numWorkers := runtime.NumCPU()
 	if applyLeetspeak {
-		fmt.Printf("[*] Modo Leetspeak ON: A lançar %d Workers na CPU para mutação profunda...\n", numWorkers)
+		fmt.Printf("[*] Leetspeak Mode ON: Launching %d CPU Workers for deep mutation...\n", numWorkers)
 	} else {
-		fmt.Printf("[*] Modo Leetspeak OFF: A gravar dicionário diretamente...\n")
+		fmt.Printf("[*] Leetspeak Mode OFF: Writing wordlist directly...\n")
 	}
 
-	for range numWorkers {
+	for i := 0; i < numWorkers; i++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
@@ -136,5 +135,5 @@ func main() {
 	close(passChan)
 	<-doneChan
 
-	fmt.Printf("[+] Dicionário pronto: %s | Tempo de Execução: %v\n", *outputPtr, time.Since(start))
+	fmt.Printf("[+] Wordlist ready: %s | Execution Time: %v\n", *outputPtr, time.Since(start))
 }
